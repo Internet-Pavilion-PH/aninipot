@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include <FastLED.h>
+#include <LightingModes.h>
+#include <../lib/Managers/connection_manager.h>
+#include <../lib/Managers/mqtt_manager.h>
 
-// Basic NeoPixel (WS2812/WS2812B) red blink example for ESP32 (nodemcu-32s)
-// Change LED_PIN to the pin you wired the data line to.
 
 #define LED_PIN    13
 #define NUM_LEDS    8
@@ -11,32 +12,30 @@
 #define BRIGHTNESS  64
 
 CRGB leds[NUM_LEDS];
+// Expose a runtime-accessible LED count for other translation units.
+int g_num_leds = NUM_LEDS;
 
-unsigned long lastMillis = 0;
-const unsigned long interval = 500; // milliseconds
-bool ledOn = false;
+// Lighting is driven by MQTT messages — no periodic blinking here.
 
 void setup() {
   // Initialise serial (optional)
   Serial.begin(9600);
   delay(10);
 
+  // Initialize connection manager (ONLINE mode)
+  initializeConnection(ONLINE);
+
+  // Initialize MQTT manager
+  mqttManager_begin();
+
   FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-  FastLED.setBrightness(BRIGHTNESS);
-  fill_solid(leds, NUM_LEDS, CRGB::Black);
-  FastLED.show();
+  // Initialize lighting settings (brightness, clear, initial show)
+  LightingModes::begin(leds, NUM_LEDS, BRIGHTNESS);
 }
 
 void loop() {
-  unsigned long now = millis();
-  if (now - lastMillis >= interval) {
-    lastMillis = now;
-    ledOn = !ledOn;
-    if (ledOn) {
-      fill_solid(leds, NUM_LEDS, CRGB::Red);
-    } else {
-      fill_solid(leds, NUM_LEDS, CRGB::Black);
-    }
-    FastLED.show();
-  }
+  // Run MQTT manager loop (handles reconnects and incoming messages)
+  mqttManager_loop();
+  // Give other tasks some CPU time
+  delay(10);
 }
