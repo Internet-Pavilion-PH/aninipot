@@ -16,6 +16,9 @@
 ConnectionMode currentConnectionMode = ONLINE;
 bool wifiConnected = false;
 
+// Track if WDT is initialized
+static bool wdtInitialized = false;
+
 // Internal helper: launch WiFiManager portal (blocks until configured or timeout)
 static void startWiFiConfigPortalImpl() {
     const char* apName = "aninipot";
@@ -23,10 +26,6 @@ static void startWiFiConfigPortalImpl() {
     Serial.print("AP SSID: ");
     Serial.println(apName);
     Serial.println("Connect a phone or laptop to this AP and open http://192.168.4.1 to configure Wi‑Fi");
-
-    // Increase watchdog timeout while portal is active so device doesn't reset
-    esp_task_wdt_init(300, true);
-    esp_task_wdt_add(NULL);
 
     WiFi.mode(WIFI_AP_STA); // keep STA available while hosting AP
     WiFiManager wm;
@@ -38,9 +37,6 @@ static void startWiFiConfigPortalImpl() {
     } else {
         Serial.println("WiFiManager: failed or timed out (returning to application).");
     }
-
-    // restore reasonable watchdog timeout for normal operation
-    esp_task_wdt_init(10, true);
 }
 
 /**
@@ -66,9 +62,13 @@ void initializeConnection(ConnectionMode mode) {
     pinMode(STATUS_LED_PIN, OUTPUT);
     digitalWrite(STATUS_LED_PIN, LOW);
 
-    // Ensure watchdog is enabled for runtime — set to 30s to allow connect attempts
-    esp_task_wdt_init(30, true);
-    esp_task_wdt_add(NULL);
+    // Initialize watchdog ONCE at startup (30s timeout, panic on trigger)
+    if (!wdtInitialized) {
+        esp_task_wdt_init(30, true);
+        esp_task_wdt_add(NULL); // add loop task once
+        wdtInitialized = true;
+        Serial.println("Watchdog initialized (30s timeout)");
+    }
 
     // Attempt to connect using stored credentials first
     WiFi.mode(WIFI_STA);
@@ -111,14 +111,7 @@ void initializeConnection(ConnectionMode mode) {
         setConnectionStatusLED(false);
         Serial.println("No stored WiFi or connect timed out. Launching config portal...");
 
-    // Increase WDT timeout before launching the blocking portal so it
-    // doesn't reset the device while waiting for user input.
-    esp_task_wdt_init(300, true);
-    esp_task_wdt_add(NULL);
-    startWiFiConfigPortalImpl();
-    // Restore a reasonable watchdog timeout after the portal returns
-    esp_task_wdt_init(30, true);
-    esp_task_wdt_add(NULL);
+        startWiFiConfigPortalImpl();
 
         // After portal returns, check connection
         if (WiFi.status() == WL_CONNECTED) {

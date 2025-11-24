@@ -3,6 +3,7 @@
 #include <LightingModes.h>
 #include <../lib/Managers/connection_manager.h>
 #include <../lib/Managers/mqtt_manager.h>
+#include <esp_task_wdt.h>
 
 
 #define LED_PIN    13
@@ -34,8 +35,12 @@ void setup() {
 }
 
 void loop() {
+  // Reset watchdog to prevent timeout
+  esp_task_wdt_reset();
+  
   // Run MQTT manager loop (handles reconnects and incoming messages)
   mqttManager_loop();
+  
   // Give other tasks some CPU time
   delay(10);
 }

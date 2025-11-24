@@ -22,7 +22,33 @@ void LightingModes::applyMode(Mode mode, CRGB *leds, int numLeds, bool on) {
       // Simple blue wash
       fill_solid(leds, numLeds, CRGB::Blue);
       break;
+    case RED_ALERT_BLINK:
+      // Use blinkRedAlert() function for timed blink behavior
+      if (on) fill_solid(leds, numLeds, CRGB::Red);
+      else fill_solid(leds, numLeds, CRGB::Black);
+      break;
   }
+}
+
+void LightingModes::blinkRedAlert(CRGB *leds, int numLeds, unsigned long durationMs) {
+  unsigned long startMs = millis();
+  unsigned long blinkInterval = 200; // 200ms on/off (5 Hz)
+  bool state = true;
+  
+  while (millis() - startMs < durationMs) {
+    if (state) {
+      fill_solid(leds, numLeds, CRGB::Red);
+    } else {
+      fill_solid(leds, numLeds, CRGB::Black);
+    }
+    FastLED.show();
+    state = !state;
+    delay(blinkInterval);
+  }
+  
+  // Turn off after blinking
+  fill_solid(leds, numLeds, CRGB::Black);
+  FastLED.show();
 }
 
 void LightingModes::begin(CRGB *leds, int numLeds, uint8_t brightness) {
