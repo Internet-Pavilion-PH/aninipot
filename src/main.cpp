@@ -6,8 +6,8 @@
 #include <esp_task_wdt.h>
 
 
-#define LED_PIN    13
-#define NUM_LEDS    8
+#define LED_PIN     3 //GPIO 3
+#define NUM_LEDS    16 //4x4 LED matrix
 #define COLOR_ORDER GRB
 #define CHIPSET     WS2812B
 #define BRIGHTNESS  64
