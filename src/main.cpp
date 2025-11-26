@@ -9,8 +9,9 @@ void setup() {
   // Initialise serial (optional)
   Serial.begin(9600);
   delay(10);
-  
+
   LEDsetup();
+  Serial.println("LED setup complete.");
 
   // Initialize connection manager (ONLINE mode)
   initializeConnection(ONLINE);
@@ -19,7 +20,6 @@ void setup() {
   // Initialize MQTT manager
   mqttManager_begin();
   Serial.println("MQTT Manager started.");
-  standby(); //turn on LEDs in standby mode
 }
 
 void loop() {

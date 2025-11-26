@@ -6,12 +6,11 @@
  #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
 
-#define LED_PIN     3   //GPIO 3
+#define LED_PIN    3   //GPIO 3 for ESP32-C3; GPIO 13 for NodeMCU-32S.
 #define NUM_LEDS   16  //4x4 LED matrix
 // Lighting is driven by MQTT messages — no periodic blinking here.
 
 Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
-
 
 // Theater-marquee-style chasing lights. Pass in a color (32-bit value,
 // a la strip.Color(r,g,b) as mentioned above), and a delay time (in ms)
@@ -35,7 +34,10 @@ void alert() {
 }
 
 void standby() {
-  theaterChase(strip.Color(255, 255, 255), 50);   //White, medium brightness
+  for(int i=0; i<strip.numPixels(); i++) {
+    strip.setPixelColor(i, strip.Color(255, 255, 255)); // Initialize all pixels to 'white'
+  }
+  strip.show(); // Update strip to match
 }
 
 void LEDsetup() {
@@ -54,5 +56,4 @@ void LEDsetup() {
     strip.setPixelColor(i, strip.Color(255, 255, 255)); // Initialize all pixels to 'white'
   }
   strip.show(); // Update strip to match
-  Serial.println("LEDs have been initialized.");
 }
