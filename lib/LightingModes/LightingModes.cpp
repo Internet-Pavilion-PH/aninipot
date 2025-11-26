@@ -49,5 +49,10 @@ void LEDsetup() {
   strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
   strip.show();            // Turn OFF all pixels ASAP
   strip.setBrightness(50); // Set BRIGHTNESS to about 1/5 (max = 255)
+
+  for(int i=0; i<strip.numPixels(); i++) {
+    strip.setPixelColor(i, strip.Color(255, 255, 255)); // Initialize all pixels to 'white'
+  }
+  strip.show(); // Update strip to match
   Serial.println("LEDs have been initialized.");
 }
