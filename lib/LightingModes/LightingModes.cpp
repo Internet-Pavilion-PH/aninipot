@@ -1,58 +1,53 @@
 #include "LightingModes.h"
+#include <Arduino.h>
+#include <Adafruit_NeoPixel.h>
 
-void LightingModes::applyMode(Mode mode, CRGB *leds, int numLeds, bool on) {
-  switch (mode) {
-    case NORMAL:
-      // Soft white at low brightness
-      fill_solid(leds, numLeds, CRGB::White);
-      break;
-    case CAUTION:
-      // Amber (use an orange-ish color)
-      fill_solid(leds, numLeds, CRGB(200, 120, 0));
-      break;
-    case RED_ALERT:
-      if (on) fill_solid(leds, numLeds, CRGB::Red);
-      else  fill_solid(leds, numLeds, CRGB::Black);
-      break;
-    case DAMAGED:
-      // Flicker orange with occasional red 'sparks' handled by caller for randomness
-      fill_solid(leds, numLeds, CRGB(180, 90, 0));
-      break;
-    case WARP:
-      // Simple blue wash
-      fill_solid(leds, numLeds, CRGB::Blue);
-      break;
-    case RED_ALERT_BLINK:
-      // Use blinkRedAlert() function for timed blink behavior
-      if (on) fill_solid(leds, numLeds, CRGB::Red);
-      else fill_solid(leds, numLeds, CRGB::Black);
-      break;
-  }
-}
+#ifdef __AVR__
+ #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
+#endif
 
-void LightingModes::blinkRedAlert(CRGB *leds, int numLeds, unsigned long durationMs) {
-  unsigned long startMs = millis();
-  unsigned long blinkInterval = 200; // 200ms on/off (5 Hz)
-  bool state = true;
-  
-  while (millis() - startMs < durationMs) {
-    if (state) {
-      fill_solid(leds, numLeds, CRGB::Red);
-    } else {
-      fill_solid(leds, numLeds, CRGB::Black);
+#define LED_PIN     3   //GPIO 3
+#define NUM_LEDS   16  //4x4 LED matrix
+// Lighting is driven by MQTT messages — no periodic blinking here.
+
+Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
+
+
+// Theater-marquee-style chasing lights. Pass in a color (32-bit value,
+// a la strip.Color(r,g,b) as mentioned above), and a delay time (in ms)
+// between frames.
+void theaterChase(uint32_t color, int wait) {
+  for(int a=0; a<10; a++) {  // Repeat 10 times...
+    for(int b=0; b<3; b++) { //  'b' counts from 0 to 2...
+      strip.clear();         //   Set all pixels in RAM to 0 (off)
+      // 'c' counts up from 'b' to end of strip in steps of 3...
+      for(int c=b; c<strip.numPixels(); c += 3) {
+        strip.setPixelColor(c, color); // Set pixel 'c' to value 'color'
+      }
+      strip.show(); // Update strip with new contents
+      delay(wait);  // Pause for a moment
     }
-    FastLED.show();
-    state = !state;
-    delay(blinkInterval);
   }
-  
-  // Turn off after blinking
-  fill_solid(leds, numLeds, CRGB::Black);
-  FastLED.show();
 }
 
-void LightingModes::begin(CRGB *leds, int numLeds, uint8_t brightness) {
-  FastLED.setBrightness(brightness);
-  fill_solid(leds, numLeds, CRGB::Black);
-  FastLED.show();
+void alert() {
+  theaterChase(strip.Color(255, 0, 0), 100);  //Red, higher brightness
+}
+
+void standby() {
+  theaterChase(strip.Color(255, 255, 255), 50);   //White, medium brightness
+}
+
+void LEDsetup() {
+    // These lines are specifically to support the Adafruit Trinket 5V 16 MHz.
+    // Any other board, you can remove this part (but no harm leaving it):
+  #if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
+    clock_prescale_set(clock_div_1);
+  #endif
+    // END of Trinket-specific code.
+
+  strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
+  strip.show();            // Turn OFF all pixels ASAP
+  strip.setBrightness(50); // Set BRIGHTNESS to about 1/5 (max = 255)
+  Serial.println("LEDs have been initialized.");
 }

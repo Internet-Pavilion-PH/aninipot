@@ -6,8 +6,7 @@
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
 #include <LightingModes.h>
-#include <FastLED.h>
-
+#include <Adafruit_NeoPixel.h>
 
 
 static const char* ABLY_TOKEN_URL = "https://kolown.net/api/ghost_auth_esp32";
@@ -32,11 +31,7 @@ static void mqttCallback(char* topic, byte* payload, unsigned int length) {
   Serial.printf("MQTT msg [%s] len=%u\n", topic, length);
   // Any received MQTT message triggers 3-second red alert blink
   Serial.println("Triggering 3-second RED_ALERT blink from MQTT message");
-  extern CRGB leds[]; // defined in `src/main.cpp`
-  extern int g_num_leds; // defined in `src/main.cpp`
-
-  // Blink red for 3 seconds then turn off (blocking call)
-  LightingModes::blinkRedAlert(leds, g_num_leds, 3000);
+  alert();
 }
 
 // Fetch an Ably token from the configured ABLY_TOKEN_URL. Returns token or
