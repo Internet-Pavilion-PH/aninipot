@@ -6,7 +6,6 @@
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
 #include <LightingModes.h>
-#include <Adafruit_NeoPixel.h>
 
 
 static const char* ABLY_TOKEN_URL = "https://kolown.net/api/ghost_auth_esp32";

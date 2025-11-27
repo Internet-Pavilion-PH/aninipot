@@ -1,3 +1,5 @@
+// This is version is for analog LED control via PWM on a single LED pin
+
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
 #include <LightingModes.h> //MODIFIED
@@ -6,7 +8,7 @@
 #include <esp_task_wdt.h>
 
 void setup() {
-  // Initialise serial (optional)
+  // Initialize serial (optional)
   Serial.begin(9600);
   delay(10);
 
