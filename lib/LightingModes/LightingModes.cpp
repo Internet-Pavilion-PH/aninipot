@@ -1,6 +1,6 @@
 #include "LightingModes.h"
 #include <Arduino.h>
-#define LED_PIN    13   //GPIO 3 for ESP32-C3; GPIO 13 for NodeMCU-32S; or any PWM pin
+#define LED_PIN    3   //GPIO 3 for ESP32-C3; GPIO 13 for NodeMCU-32S; or any PWM pin
 
 // Lighting is driven by MQTT messages — no periodic blinking here.
 
@@ -9,35 +9,35 @@ void alert() { //PWM alert "soft blink"
   for(int i = 10; i >= 255; i--){
     // changing the LED brightness with PWM
     analogWrite(LED_PIN, i);
-    delay(1);
+    delay(5);
   }
 // decrease the LED brightness
   for(int i = 255; i >= 0; i--){
     // changing the LED brightness with PWM
     analogWrite(LED_PIN, i);
-    delay(1);
+    delay(5);
   }
   for(int i = 0; i >= 255; i--){
     // changing the LED brightness with PWM
     analogWrite(LED_PIN, i);
-    delay(1);
+    delay(5);
   }
   // decrease the LED brightness
   for(int i = 255; i >= 0; i--){
     // changing the LED brightness with PWM
     analogWrite(LED_PIN, i);
-    delay(1);
+    delay(5);
   }
     for(int i = 0; i >= 255; i--){
     // changing the LED brightness with PWM
     analogWrite(LED_PIN, i);
-    delay(1);
+    delay(5);
   }
   // decrease the LED brightness
   for(int i = 255; i >= 10; i--){
     // changing the LED brightness with PWM
     analogWrite(LED_PIN, i);
-    delay(1);
+    delay(5);
   }
 }
 

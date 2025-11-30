@@ -31,7 +31,7 @@ static void mqttCallback(char* topic, byte* payload, unsigned int length) {
   // Any received MQTT message triggers 3-second red alert blink
   Serial.println("Triggering 3-second RED_ALERT blink from MQTT message");
   alert();
-  standby();
+  //standby();
 }
 
 // Fetch an Ably token from the configured ABLY_TOKEN_URL. Returns token or
