@@ -36,3 +36,10 @@ a light exploration using Neopixels LEDs used as a notifier for incoming *dropca
    Wait for the Aninipot's lights to blink in real time; GhostWhisper will play the sound shortly thereafter.
 
    To turn the piece ON or OFF, plug or unplug the Power Supply Unit from the outlet. Alternatively, the Power Supply Unit may be plugged into an adaptor with a switch or a powerstrip that has a switch.
+
+
+## Wiring Guide
+
+![Neopixels Wiring Guide](lib/neopixels-esp32.png)
+
+for larger LED counts, kindly follow the **https://learn.adafruit.com/adafruit-neopixel-uberguide/basic-connections**
