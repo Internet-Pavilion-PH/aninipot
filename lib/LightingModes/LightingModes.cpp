@@ -1,6 +1,14 @@
 #include "LightingModes.h"
 #include <Arduino.h>
-#define LED_PIN    3   //GPIO 3 for ESP32-C3; GPIO 13 for NodeMCU-32S; or any PWM pin
+
+// Board-specific configurations
+#ifdef BOARD_NODEMCU_32S
+  #define LED_PIN   13
+#endif
+
+#ifdef BOARD_TTGO_T_OI_PLUS
+  #define LED_PIN   3
+#endif
 
 // Lighting is driven by MQTT messages — no periodic blinking here.
 
