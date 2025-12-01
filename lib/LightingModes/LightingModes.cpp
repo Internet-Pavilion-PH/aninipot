@@ -6,8 +6,17 @@
  #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
 
-#define LED_PIN    3   //GPIO 3 for ESP32-C3; GPIO 13 for NodeMCU-32S.
-#define NUM_LEDS   16  //4x4 LED matrix
+// Board-specific configurations
+#ifdef BOARD_NODEMCU_32S
+  #define LED_PIN   13
+  #define NUM_LEDS  16
+#endif
+
+#ifdef BOARD_TTGO_T_OI_PLUS
+  #define LED_PIN   3
+  #define NUM_LEDS  16
+#endif
+
 // Lighting is driven by MQTT messages — no periodic blinking here.
 
 Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
