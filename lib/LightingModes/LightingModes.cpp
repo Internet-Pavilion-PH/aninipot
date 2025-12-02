@@ -12,6 +12,11 @@
   #define NUM_LEDS  16
 #endif
 
+#ifdef BOARD_ESP32_DEV
+  #define LED_PIN   13
+  #define NUM_LEDS  16
+#endif
+
 #ifdef BOARD_TTGO_T_OI_PLUS
   #define LED_PIN   3
   #define NUM_LEDS  16
