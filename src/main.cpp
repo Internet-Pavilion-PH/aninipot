@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
+#include <Adafruit_NeoMatrix.h>
+#include <Adafruit_GFX.h>
 #include <LightingModes.h> //MODIFIED
 #include <../lib/Managers/connection_manager.h>
 #include <../lib/Managers/mqtt_manager.h>
@@ -10,7 +12,8 @@ void setup() {
   Serial.begin(9600);
   delay(10);
 
-  LEDsetup();
+  //LEDsetup();
+  MatrixSetup();
   Serial.println("LED setup complete.");
 
   // Initialize connection manager (ONLINE mode)
