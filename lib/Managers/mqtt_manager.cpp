@@ -6,8 +6,6 @@
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
 #include <LightingModes.h>
-#include <Adafruit_NeoPixel.h>
-#include <Adafruit_NeoMatrix.h>
 #include <Adafruit_GFX.h>
 
 // ABLY token URL is hardcoded here so `secrets.h` is not required for runtime.
@@ -15,7 +13,7 @@ static const char* ABLY_TOKEN_URL = "https://kolown.net/api/ghost_auth_esp32";
 
 // Response topic and device identity for simple 'poke' requests
 static const char* RESPONSE_TOPIC = "dropcall/responses";
-static const char* DEVICE_NAME = "Aninipot";
+static const char* DEVICE_NAME = "Aninipot_Rhaz-2";
 
 static WiFiClientSecure mqttNet;
 static PubSubClient mqttClient(mqttNet);
